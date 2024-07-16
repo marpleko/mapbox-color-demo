@@ -9,7 +9,7 @@ import mapboxgl from 'mapbox-gl';
 const props = defineProps({
   modelValue: Object,
   mapStyle: String,
-  isChangeColor: Boolean
+  isChangeProperty: Boolean
 });
 const styles = {
   'CAStyle': import.meta.env.VITE_CAStyle,
@@ -23,7 +23,7 @@ const map = ref(null);
 mapboxgl.accessToken = import.meta.env.VITE_UserAccessToken;
 
 watch(
-  () => props.isChangeColor,
+  () => props.isChangeProperty,
   () => {
     const layers = [
       'tunnel_trunk_primary_casing',
@@ -35,7 +35,9 @@ watch(
     ];
 
     layers.forEach(layer => {
+      map.value.setPaintProperty(layer, 'line-opacity', 0.2);
       map.value.setPaintProperty(layer, 'line-color', 'hsl(0, 100%, 50%)');
+
     });
   }
 );

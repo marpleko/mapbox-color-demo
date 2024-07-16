@@ -2,10 +2,10 @@
   <div id="layout">
     <div id="sidebar">
       <div>
-        <button @click="changeColor">省道顏色變換</button>
+        <button @click="changeColor">省道顏色變紅透明度80%</button>
       </div>
     </div>
-    <Map :modelValue="location" :mapStyle="mapStyle" :isChangeColor="isChangeColor" />
+    <Map :modelValue="location" :mapStyle="mapStyle" :isChangeProperty="isChangeProperty" />
   </div>
 </template>
 
@@ -16,9 +16,9 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 
 const mapStyle = ref('CAStyle');
 const styles = ['CAStyle']
-const isChangeColor = ref(false)
+const isChangeProperty = ref(false)
 const changeColor = () => {
-  isChangeColor.value = !isChangeColor.value;
+  isChangeProperty.value = !isChangeProperty.value;
 };
 const initialLocation = {
   lng: 121,
