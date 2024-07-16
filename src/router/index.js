@@ -7,7 +7,7 @@ const routes = [
   {
     path: '/',
     name: 'Home',
-    component: LayerDemo
+    component: ColorDemo
   },
   {
     path: '/color-demo',
@@ -27,8 +27,7 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(import.meta.env.VITE_BASE_URL),
   routes
 })
-
 export default router
