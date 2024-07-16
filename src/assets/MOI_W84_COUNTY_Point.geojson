@@ -1,0 +1,203 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": 0,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [120.04609782600005, 26.186317888000076]
+      },
+      "properties": { "FID": 0, "COUNTYCODE": "09007", "COUNTYNAME": "連江縣" }
+    },
+    {
+      "type": "Feature",
+      "id": 1,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [121.64586939800006, 24.573665616000028]
+      },
+      "properties": { "FID": 1, "COUNTYCODE": "10002", "COUNTYNAME": "宜蘭縣" }
+    },
+    {
+      "type": "Feature",
+      "id": 2,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [120.46885794800005, 23.964436450000051]
+      },
+      "properties": { "FID": 2, "COUNTYCODE": "10007", "COUNTYNAME": "彰化縣" }
+    },
+    {
+      "type": "Feature",
+      "id": 3,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [120.98214379000001, 23.842781804000026]
+      },
+      "properties": { "FID": 3, "COUNTYCODE": "10008", "COUNTYNAME": "南投縣" }
+    },
+    {
+      "type": "Feature",
+      "id": 4,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [120.37317737300009, 23.686423131000026]
+      },
+      "properties": { "FID": 4, "COUNTYCODE": "10009", "COUNTYNAME": "雲林縣" }
+    },
+    {
+      "type": "Feature",
+      "id": 5,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [121.72232466300011, 25.121881348000045]
+      },
+      "properties": { "FID": 5, "COUNTYCODE": "10017", "COUNTYNAME": "基隆市" }
+    },
+    {
+      "type": "Feature",
+      "id": 6,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [121.55332654600011, 25.082844149000039]
+      },
+      "properties": { "FID": 6, "COUNTYCODE": "63000", "COUNTYNAME": "臺北市" }
+    },
+    {
+      "type": "Feature",
+      "id": 7,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [121.59541122300004, 24.986976263000031]
+      },
+      "properties": { "FID": 7, "COUNTYCODE": "65000", "COUNTYNAME": "新北市" }
+    },
+    {
+      "type": "Feature",
+      "id": 8,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [120.89241133100006, 24.238225038000053]
+      },
+      "properties": { "FID": 8, "COUNTYCODE": "66000", "COUNTYNAME": "臺中市" }
+    },
+    {
+      "type": "Feature",
+      "id": 9,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [120.32475091800006, 23.150806509000063]
+      },
+      "properties": { "FID": 9, "COUNTYCODE": "67000", "COUNTYNAME": "臺南市" }
+    },
+    {
+      "type": "Feature",
+      "id": 10,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [121.25772061800001, 24.903267180000057]
+      },
+      "properties": { "FID": 10, "COUNTYCODE": "68000", "COUNTYNAME": "桃園市" }
+    },
+    {
+      "type": "Feature",
+      "id": 11,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [120.92195899000001, 24.483896884000046]
+      },
+      "properties": { "FID": 11, "COUNTYCODE": "10005", "COUNTYNAME": "苗栗縣" }
+    },
+    {
+      "type": "Feature",
+      "id": 12,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [120.44775749200005, 23.480521674000045]
+      },
+      "properties": { "FID": 12, "COUNTYCODE": "10020", "COUNTYNAME": "嘉義市" }
+    },
+    {
+      "type": "Feature",
+      "id": 13,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [120.5199696200001, 23.44871239500003]
+      },
+      "properties": { "FID": 13, "COUNTYCODE": "10010", "COUNTYNAME": "嘉義縣" }
+    },
+    {
+      "type": "Feature",
+      "id": 14,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [118.37811731900001, 24.461559890000046]
+      },
+      "properties": { "FID": 14, "COUNTYCODE": "09020", "COUNTYNAME": "金門縣" }
+    },
+    {
+      "type": "Feature",
+      "id": 15,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [120.61533028200006, 22.993422288000033]
+      },
+      "properties": { "FID": 15, "COUNTYCODE": "64000", "COUNTYNAME": "高雄市" }
+    },
+    {
+      "type": "Feature",
+      "id": 16,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [121.04161844100008, 22.863226053000062]
+      },
+      "properties": { "FID": 16, "COUNTYCODE": "10014", "COUNTYNAME": "臺東縣" }
+    },
+    {
+      "type": "Feature",
+      "id": 17,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [121.37896520400011, 23.753366482000047]
+      },
+      "properties": { "FID": 17, "COUNTYCODE": "10015", "COUNTYNAME": "花蓮縣" }
+    },
+    {
+      "type": "Feature",
+      "id": 18,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [119.57489473700002, 23.543286392000027]
+      },
+      "properties": { "FID": 18, "COUNTYCODE": "10016", "COUNTYNAME": "澎湖縣" }
+    },
+    {
+      "type": "Feature",
+      "id": 19,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [120.94618747300001, 24.786854069000071]
+      },
+      "properties": { "FID": 19, "COUNTYCODE": "10018", "COUNTYNAME": "新竹市" }
+    },
+    {
+      "type": "Feature",
+      "id": 20,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [121.16349687800005, 24.681127772000025]
+      },
+      "properties": { "FID": 20, "COUNTYCODE": "10004", "COUNTYNAME": "新竹縣" }
+    },
+    {
+      "type": "Feature",
+      "id": 21,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [120.67669159400009, 22.482784113000037]
+      },
+      "properties": { "FID": 21, "COUNTYCODE": "10013", "COUNTYNAME": "屏東縣" }
+    }
+  ]
+}
