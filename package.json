@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "deploy": "vite build && gh-pages -d dist"
+    "deploy-win": "vite build && copy dist\\index.html dist\\404.html && gh-pages -d dist",
+    "deploy": "vite build && cp dist/index.html dist/404.html && gh-pages -d dist"
   },
   "dependencies": {
     "axios": "^1.7.2",

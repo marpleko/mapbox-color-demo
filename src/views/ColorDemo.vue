@@ -2,7 +2,7 @@
   <div id="layout">
     <div id="sidebar">
       <div>
-        <button @click="changeColor">省道顏色變紅透明度80%</button>
+        <button @click="changeColor">國道顏色變紅透明度80%</button>
       </div>
     </div>
     <Map :modelValue="location" :mapStyle="mapStyle" :isChangeProperty="isChangeProperty" />

@@ -26,19 +26,33 @@ watch(
   () => props.isChangeProperty,
   () => {
     const layers = [
-      'tunnel_trunk_primary_casing',
-      'tunnel_trunk_primary',
-      'bridge_trunk_primary',
-      'road_trunk_primary',
-      'road_trunk_primary_casing',
-      'bridge_trunk_primary_casing'
+      // 'tunnel_motorway_link_casing',
+      // 'tunnel_motorway_casing',
+      'tunnel_motorway_link',
+      'tunnel_motorway',
+      // 'road_motorway_link_casing',
+      // 'road_motorway_casing',
+      'road_motorway_link',
+      'road_motorway',
+      // 'bridge_motorway_link_casing',
+      // 'bridge_motorway_casing',
+      'bridge_motorway_link',
+      'bridge_motorway',
     ];
+    if (props.isChangeProperty) {
+      layers.forEach(layer => {
+        map.value.setPaintProperty(layer, 'line-opacity', 0.2);
+        map.value.setPaintProperty(layer, 'line-color', 'hsl(0, 100%, 50%)');
 
-    layers.forEach(layer => {
-      map.value.setPaintProperty(layer, 'line-opacity', 0.2);
-      map.value.setPaintProperty(layer, 'line-color', 'hsl(0, 100%, 50%)');
+      });
+    } else {
+      layers.forEach(layer => {
+        map.value.setPaintProperty(layer, 'line-opacity', 1);
+        map.value.setPaintProperty(layer, 'line-color', '#fc8');
 
-    });
+      });
+    }
+
   }
 );
 
@@ -64,9 +78,6 @@ onMounted(() => {
   });
 
   map.value.addControl(new mapboxgl.NavigationControl());
-
-
-
 });
 
 onUnmounted(() => {
