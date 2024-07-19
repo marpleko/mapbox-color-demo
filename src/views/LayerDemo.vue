@@ -29,9 +29,10 @@
           </tbody>
         </table>
       </div>
+      <button @click="addNewLayer">add new layer</button>
     </div>
     <Map :modelValue="location" :mapStyle="mapStyle" :selectedLayers="selectedLayers"
-      :layerTransparency="layerTransparency" />
+      :layerTransparency="layerTransparency" :isAddNewLayer="isAddNewLayer" />
   </div>
 </template>
 
@@ -39,7 +40,10 @@
 import { ref, onMounted } from 'vue';
 import Map from '../maps/LayerDemoMap.vue';
 import 'mapbox-gl/dist/mapbox-gl.css';
-
+const isAddNewLayer = ref(false)
+const addNewLayer = () => {
+  isAddNewLayer.value = !isAddNewLayer.value;
+};
 const mapStyle = ref('mapboxStyle');
 const styles = ['mapboxStyle', 'maptilerStyle', 'ncdrStyle']
 const layerTransparency = ref({

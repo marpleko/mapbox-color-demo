@@ -13,11 +13,11 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import Map from '../maps/ColorDemoMap.vue';
+import Map from '../maps/satelliteDemoMap.vue';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
-const mapStyle = ref('CAStyle');
-const styles = ['CAStyle']
+const mapStyle = ref('satelliteStyle');
+const styles = ['satelliteStyle']
 const isMotorwayChangeProperty = ref(false)
 const isPrimaryChangeProperty = ref(false)
 const changePrimaryColor = () => {

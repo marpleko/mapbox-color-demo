@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import ColorDemo from '../views/ColorDemo.vue'
 import LayerDemo from '../views/LayerDemo.vue'
 import ColorChoose from '../views/ColorChoose.vue'
+import satelliteDemo from '../views/satelliteDemo.vue'
 
 const routes = [
   {
@@ -23,6 +24,11 @@ const routes = [
     path: '/color-choose',
     name: 'ColorChoose',
     component: ColorChoose
+  },
+  {
+    path: '/satellite-demo',
+    name: 'satelliteDemo',
+    component: satelliteDemo
   },
 ]
 

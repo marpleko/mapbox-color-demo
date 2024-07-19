@@ -10,7 +10,8 @@ const props = defineProps({
   modelValue: Object,
   mapStyle: String,
   selectedLayers: Object,
-  layerTransparency: Object
+  layerTransparency: Object,
+  isAddNewLayer: Boolean
 });
 const styles = {
   'CAStyle': import.meta.env.VITE_CAStyle,
@@ -22,6 +23,47 @@ const mapContainer = ref(null);
 const map = ref(null);
 let clickedCircleID = null;
 mapboxgl.accessToken = import.meta.env.VITE_UserAccessToken;
+
+watch(
+  () => props.isAddNewLayer,
+  () => {
+    map.value.off('style.load', handleStyleLoad);
+    function handleStyleLoad() {
+      if (!map.value.getSource('soilLiquefactionPotential')) {
+        map.value.addSource('soilLiquefactionPotential', {
+          type: 'geojson',
+          data: 'soilLiquefactionPotential.geojson'
+        });
+      }
+      if (!map.value.getLayer('soilLiquefactionPotential-layer')) {
+        map.value.addLayer({
+          id: 'soilLiquefactionPotential-layer',
+          type: 'fill',
+          source: 'soilLiquefactionPotential',
+          paint: {
+            'fill-color': [
+              'case',
+              ['==', ['get', 'class'], '3'], '#00ff00',
+              ['==', ['get', 'class'], '2'], '#ffff00',
+              ['==', ['get', 'class'], '1'], '#ff0000',
+              '#000000'
+            ],
+            'fill-opacity': calculateNormalizedOpacity(props.layerTransparency.soilLiquefactionPotential)
+          },
+          layout: {
+            'visibility': props.selectedLayers.countyCityBoundariesGeoJSON ? 'visible' : 'none'
+          }
+        });
+      }
+    }
+    map.value.on('style.load', handleStyleLoad);
+
+    if (map.value.isStyleLoaded()) {
+      handleStyleLoad();
+    }
+  }
+)
+
 
 const updateLayerVisibility = (layerId, isVisible) => {
   if (map.value.getLayer(layerId)) {
@@ -273,29 +315,7 @@ function addAdditionalSourceAndLayer() {
       }
     }, 'riceCrop-layer');
 
-    map.value.addSource('soilLiquefactionPotential', {
-      type: 'geojson',
-      data: 'soilLiquefactionPotential.geojson'
-    });
 
-    map.value.addLayer({
-      id: 'soilLiquefactionPotential-layer',
-      type: 'fill',
-      source: 'soilLiquefactionPotential',
-      paint: {
-        'fill-color': [
-          'case',
-          ['==', ['get', 'class'], '3'], '#00ff00',
-          ['==', ['get', 'class'], '2'], '#ffff00',
-          ['==', ['get', 'class'], '1'], '#ff0000',
-          '#000000'
-        ],
-        'fill-opacity': calculateNormalizedOpacity(props.layerTransparency.soilLiquefactionPotential)
-      },
-      layout: {
-        'visibility': props.selectedLayers.countyCityBoundariesGeoJSON ? 'visible' : 'none'
-      }
-    });
 
     map.value.addSource('countyCityBoundariesGeoJSON', {
       type: 'geojson',

@@ -16,7 +16,8 @@ const styles = {
   'CAStyle': import.meta.env.VITE_CAStyle,
   'mapboxStyle': import.meta.env.VITE_mapboxStyle,
   'maptilerStyle': import.meta.env.VITE_maptilerStyle,
-  'ncdrStyle': import.meta.env.VITE_ncdrStyle
+  'ncdrStyle': import.meta.env.VITE_ncdrStyle,
+  'satelliteStyle': import.meta.env.VITE_satellite
 }
 const emit = defineEmits(['update:modelValue']);
 const mapContainer = ref(null);
@@ -125,9 +126,10 @@ watch(
 onMounted(() => {
   const { lng, lat, zoom, bearing, pitch } = props.modelValue;
 
+  // Initialize the map
   map.value = new mapboxgl.Map({
     container: mapContainer.value,
-    style: styles[props.mapStyle],
+    style: '/mapbox-color-demo/style_road_district.json',
     center: [lng, lat],
     bearing,
     pitch,
@@ -135,8 +137,13 @@ onMounted(() => {
   });
 
   map.value.addControl(new mapboxgl.NavigationControl());
-});
 
+  map.value.on('load', () => {
+    map.value.addImport({ id: 'road', url: import.meta.env.VITE_mapboxStyle });
+    console.log(map.value)
+    console.log("Style fully loaded, and custom modifications can be safely made.");
+  });
+});
 onUnmounted(() => {
   if (map.value) {
     map.value.remove();
