@@ -1,12 +1,17 @@
 <template>
     <div id="app">
         <nav>
-            <div>
+            <!-- <div>
                 <router-link to="/layer-demo">Layer Demo</router-link>
-
-            </div>
+            </div> -->
             <div>
                 <router-link to="/color-demo">Color Demo</router-link>
+            </div>
+            <div>
+                <router-link to="/satellite-demo">Satellite</router-link>
+            </div>
+            <div>
+                <router-link to="/demo">Choose style</router-link>
             </div>
             <!-- <div>
                 <router-link to="/color-choose">Color Choose</router-link>

@@ -2,13 +2,23 @@ import { createRouter, createWebHistory } from 'vue-router'
 import ColorDemo from '../views/ColorDemo.vue'
 import LayerDemo from '../views/LayerDemo.vue'
 import ColorChoose from '../views/ColorChoose.vue'
-import satelliteDemo from '../views/satelliteDemo.vue'
+import SatelliteDemo from '../views/SatelliteDemo.vue'
+import MaintainLayerDemo from '../views/MaintainLayerDemo.vue'
+import BlankDemo from '../views/BlankDemo.vue'
+import ImportDemoMap from '../views/ImportDemo.vue'
+import Demo from '../views/Demo.vue'
+import SmoothDemo from '../views/SmoothDemo.vue'
 
 const routes = [
   {
     path: '/',
     name: 'Home',
     component: ColorDemo
+  },
+  {
+    path: '/demo',
+    name: 'Demo',
+    component: Demo
   },
   {
     path: '/color-demo',
@@ -27,8 +37,28 @@ const routes = [
   },
   {
     path: '/satellite-demo',
-    name: 'satelliteDemo',
-    component: satelliteDemo
+    name: 'SatelliteDemo',
+    component: SatelliteDemo
+  },
+  {
+    path: '/maintainLayer-demo',
+    name: 'MaintainLayerDemo',
+    component: MaintainLayerDemo
+  },
+  {
+    path: '/blank-demo',
+    name: 'BlankDemo',
+    component: BlankDemo
+  },  
+  {
+    path: '/import-demo',
+    name: 'ImportDemoMap',
+    component: ImportDemoMap
+  },
+  {
+    path: '/smooth-demo',
+    name: 'SmoothDemo',
+    component: SmoothDemo
   },
 ]
 

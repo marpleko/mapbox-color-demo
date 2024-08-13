@@ -1,0 +1,26 @@
+{
+  "name": "Mapbox Streets",
+  "sprite": "mapbox://sprites/mapbox/streets-v12",
+  "glyphs": "mapbox://fonts/mapbox/{fontstack}/{range}.pbf",
+  "center": [-92.25, 37.75],
+  "zoom": 2,
+  "fog": {},
+  "projection": { "name": "globe" },
+  "visibility": "public",
+  "version": 8,
+  "layers": [
+    {
+      "id": "backgroundMap",
+      "type": "background",
+      "paint": {
+        "background-color": "rgba(0, 0, 0, 0)"
+      }
+    }
+  ],
+  "sources": {},
+  "created": "1970-01-01T00:00:00.000Z",
+  "modified": "1970-01-01T00:00:00.000Z",
+  "owner": "mapbox",
+  "id": "streets-v12",
+  "draft": false
+}

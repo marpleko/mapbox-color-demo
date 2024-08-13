@@ -10,8 +10,9 @@ import axios from 'axios';
 const props = defineProps({
   modelValue: Object,
   mapStyle: String,
-  layerColors: Object,
-  layerOpacity: Object
+  selectedLayers: Object,
+  layerTransparency: Object,
+  isAddNewLayer: Boolean
 });
 const styles = {
   'CAStyle': import.meta.env.VITE_CAStyle,
@@ -19,171 +20,141 @@ const styles = {
   'maptilerStyle': import.meta.env.VITE_maptilerStyle,
   'ncdrStyle': import.meta.env.VITE_ncdrStyle
 }
-
-const emit = defineEmits(['update:layerColors']);
-
-const layerTypes = ['line'];
-const roadTypes = ['primary', 'motorway', 'secondary'];
+const emit = defineEmits(['update:modelValue']);
+const baseUrl = ref('');
 const mapContainer = ref(null);
 const map = ref(null);
 let clickedCircleID = null;
+const previousStyle = ref(null);
 mapboxgl.accessToken = import.meta.env.VITE_UserAccessToken;
-// 動態生成 Layers 
-// const Layers = {
-//   CAStyle: {
-//     line: {
-//       primary: [
-//       ],
-//       motorway: [
-//       ]
-//     }
-//   },
-//   mapboxStyle: {
-//     line: {
-//       primary: [
-//       ],
-//       motorway: [
-//       ]
-//     }
-//   }
-// };
-const Layers = Object.keys(styles).reduce((acc, styleName) => {
-  acc[styleName] = layerTypes.reduce((layerAcc, layerType) => {
-    layerAcc[layerType] = roadTypes.reduce((roadAcc, roadType) => {
-      roadAcc[roadType] = [];
-      return roadAcc;
-    }, {});
-    return layerAcc;
-  }, {});
-  return acc;
-}, {});
-
-// 處理地圖樣式數據
-// 填入對應的layerid
-// const Layers = {
-//   CAStyle: {
-//     line: {
-//       primary: [
-//         'tunnel_trunk_primary_casing',
-//         'tunnel_trunk_primary',
-//         'bridge_trunk_primary',
-//         'road_trunk_primary',
-//         'road_trunk_primary_casing',
-//         'bridge_trunk_primary_casing'
-//       ],
-//       motorway: [
-//         "tunnel_motorway_link_casing",
-//         "tunnel_motorway_casing",
-//         "tunnel_motorway_link",
-//         "tunnel_motorway",
-//         "road_motorway_link_casing",
-//         "road_motorway_casing",
-//         "road_motorway_link",
-//         "road_motorway",
-//         "bridge_motorway_link_casing",
-//         "bridge_motorway_casing",
-//         "bridge_motorway_link",
-//         "bridge_motorway",
-//       ]
-//     }
-//   }
-
-// };
-
-const processMapStyle = (mapStyle, styleName, excludeKeyword) => {
-  layerTypes.forEach(layerType => {
-    roadTypes.forEach(roadType => {
-      if (Layers[styleName] && Layers[styleName][layerType]) {
-        Layers[styleName][layerType][roadType] = mapStyle.layers
-          .filter(layer =>
-            layer.type === layerType &&
-            layer.id.includes(roadType) &&
-            !layer.id.includes(excludeKeyword)
-          )
-          .map(layer => layer.id);
-      }
-    });
-  });
-  console.log(Layers);
+const addedLayerIds = ref({});
+const getLocation = () => {
+  return {
+    ...map.value.getCenter(),
+    bearing: map.value.getBearing(),
+    pitch: map.value.getPitch(),
+    zoom: map.value.getZoom()
+  };
 };
 
-const fetchMapStyle = async (styleUrl, styleName) => {
-  try {
-    const response = await axios.get(styleUrl);
-    const mapStyle = response.data;
-    console.log(mapStyle);
-    processMapStyle(mapStyle, styleName, 'casing');
-  } catch (error) {
-    console.error('Error loading the map style:', error);
+const updateLocation = () => emit('update:modelValue', getLocation());
+
+const updateLayerVisibility = (layerId, isVisible) => {
+  if (map.value.getLayer(layerId)) {
+    map.value.setLayoutProperty(layerId, 'visibility', isVisible ? 'visible' : 'none');
   }
 };
+
+const updateLayerOpacity = (layerId, opacity) => {
+  let layer = map.value.getLayer(layerId)
+  if (layer) {
+    if (layer.type == 'fill') {
+      map.value.setPaintProperty(layerId, 'fill-opacity', opacity);
+    } else if (layer.type == 'raster') {
+      map.value.setPaintProperty(layerId, 'raster-opacity', opacity);
+    } else if (layer.type == 'line') {
+      map.value.setPaintProperty(layerId, 'line-opacity', opacity);
+    } else if (layer.type == 'symbol') {
+      map.value.setPaintProperty(layerId, 'text-opacity', opacity);
+    } else if (layer.type == 'circle') {
+      map.value.setPaintProperty(layerId, 'circle-opacity', opacity);
+    }
+  }
+};
+
+watch(
+  () => props.modelValue,
+  (next) => {
+    if (map.value) {
+      const curr = getLocation();
+      if (curr.lng !== next.lng || curr.lat !== next.lat)
+        map.value.setCenter({ lng: next.lng, lat: next.lat });
+      if (curr.pitch !== next.pitch) map.value.setPitch(next.pitch);
+      if (curr.bearing !== next.bearing) map.value.setBearing(next.bearing);
+      if (curr.zoom !== next.zoom) map.value.setZoom(next.zoom);
+    }
+
+  },
+  { immediate: true }
+);
+
+watch(
+  () => props.selectedLayers,
+  (newSelectedLayers) => {
+    for (let [layerId, isVisible] of Object.entries(newSelectedLayers)) {
+      if (layerId == 'earthquake') {
+        updateLayerVisibility('cluster-layer', isVisible);
+        updateLayerVisibility('unclustered-layer', isVisible);
+        updateLayerVisibility('cluster-text-layer', isVisible);
+      } else {
+        updateLayerVisibility(layerId + '-layer', isVisible);
+      }
+
+    }
+  },
+  { deep: true }
+);
+
+watch(
+  () => props.layerTransparency,
+  (newTransparency) => {
+    for (let [layer, opacity] of Object.entries(newTransparency)) {
+      if (layer == 'earthquake') {
+        updateLayerOpacity('cluster-layer', parseFloat(opacity) / 100.0);
+        updateLayerOpacity('unclustered-layer', parseFloat(opacity) / 100.0);
+        updateLayerOpacity('cluster-text-layer', parseFloat(opacity) / 100.0);
+      } else {
+        updateLayerOpacity(layer + '-layer', parseFloat(opacity) / 100.0);
+      }
+    }
+  },
+  { deep: true }
+);
 
 watch(
   () => props.mapStyle,
-  async (newStyle) => {
-    console.log(styles[newStyle]);
-    await fetchMapStyle(styles[newStyle], newStyle);
-
+  (newStyle) => {
     if (map.value) {
-      map.value.setStyle(styles[newStyle]);
-      map.value.on('load', () => {
-        getInitialColors();
-      });
+      console.log('Changing style to:', newStyle);
+
+
+
+      if (!addedLayerIds.value[newStyle]) {
+        addedLayerIds.value[newStyle] = [];
+      }
+      axios.get(styles[newStyle])
+        .then(response => {
+          const mapStyle = response.data;
+          Object.keys(mapStyle.sources).forEach(sourceName => {
+            if (!map.value.getSource(sourceName)) {
+              map.value.addSource(sourceName, mapStyle.sources[sourceName]);
+            }
+          });
+          mapStyle.layers.forEach(layer => {
+            if (!map.value.getLayer(layer.id)) {
+              map.value.addLayer(layer, 'blank-layer');
+              addedLayerIds.value[props.mapStyle].push(layer.id);
+            }
+          });
+
+          console.log('Layers after update:', map);
+        })
+        .catch(error => {
+          console.error('Error loading the map style:', error);
+        });
+      if (previousStyle.value && addedLayerIds.value[previousStyle.value]) {
+        removeAddedLayers(previousStyle.value);
+      }
+
+      previousStyle.value = newStyle;
     }
+    console.log('Currently added layers:', addedLayerIds);
+    console.log(map.value.listImages());
   }
 );
 
-watch(
-  () => ({ ...props.layerColors }),
-  (newColor, oldColor) => {
-    console.log('Layer colors changed:', newColor);
-
-    if (props.mapStyle && Layers[props.mapStyle]) {
-      Object.entries(newColor).forEach(([key, color]) => {
-        if (!oldColor || color !== oldColor[key]) {
-          console.log(`Layer color changed: ${key}, New value: ${color}, Old value: ${oldColor?.[key]}`);
-
-          const layerGroup = Layers[props.mapStyle]['line'][key];
-          if (layerGroup) {
-            layerGroup.forEach(layer => {
-              map.value.setPaintProperty(layer, 'line-color', color);
-            });
-          }
-        }
-      });
-    }
-  },
-  { deep: true }
-);
-const calculateNormalizedOpacity = (opacity) => {
-  const parsedOpacity = parseFloat(opacity);
-  return (100 - parsedOpacity) / 100;
-};
-watch(
-  () => ({ ...props.layerOpacity }),
-  (newOpacity, oldOpacity) => {
-    console.log('Layer opacities changed:', newOpacity);
-
-    if (props.mapStyle && Layers[props.mapStyle]) {
-      Object.entries(newOpacity).forEach(([key, opacity]) => {
-        if (!oldOpacity || opacity !== oldOpacity[key]) {
-          console.log(`Layer opacity changed: ${key}, New value: ${opacity}, Old value: ${oldOpacity?.[key]}`);
-
-          const layerGroup = Layers[props.mapStyle]['line'][key];
-          if (layerGroup) {
-            layerGroup.forEach(layer => {
-              map.value.setPaintProperty(layer, 'line-opacity', calculateNormalizedOpacity(opacity));
-            });
-          }
-        }
-      });
-    }
-  },
-  { deep: true }
-);
-
 function addAdditionalSourceAndLayer() {
-  map.value.on('style.load', () => {
+  map.value.on('load', () => {
     map.value.addSource('riceCrop', {
       type: 'vector',
       tiles: [
@@ -200,8 +171,10 @@ function addAdditionalSourceAndLayer() {
       'source-layer': 'Rice',
       paint: {
         'fill-color': '#ffd338',
+        'fill-opacity': parseFloat(props.layerTransparency.riceCrop) / 100.0
       },
       layout: {
+        'visibility': props.selectedLayers.riceCrop ? 'visible' : 'none'
       }
     });
 
@@ -236,8 +209,10 @@ function addAdditionalSourceAndLayer() {
           30, 20,
           40
         ],
+        'circle-opacity': parseFloat(props.layerTransparency.earthquake) / 100.0
       },
       layout: {
+        'visibility': props.selectedLayers.earthquake ? 'visible' : 'none'
       }
     });
 
@@ -250,8 +225,10 @@ function addAdditionalSourceAndLayer() {
         'text-field': ['get', 'point_count_abbreviated'],
         'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
         'text-size': 12,
+        'visibility': props.selectedLayers.earthquake ? 'visible' : 'none',
       },
       paint: {
+        'text-opacity': parseFloat(props.layerTransparency.earthquake) / 100.0
       },
     });
 
@@ -269,6 +246,7 @@ function addAdditionalSourceAndLayer() {
           '#ffff00', 7,
           '#ff0000'
         ],
+        'circle-opacity': parseFloat(props.layerTransparency.earthquake) / 100.0,
         'circle-stroke-width': [
           'case',
           ['boolean', ['feature-state', 'clicked'], false],
@@ -278,6 +256,7 @@ function addAdditionalSourceAndLayer() {
         'circle-stroke-color': '#000000'
       },
       layout: {
+        'visibility': props.selectedLayers.earthquake ? 'visible' : 'none'
       }
     });
 
@@ -345,8 +324,10 @@ function addAdditionalSourceAndLayer() {
       type: "raster",
       source: 'industrialAreaScope',
       paint: {
+        'raster-opacity': parseFloat(props.layerTransparency.industrialAreaScope) / 100.0
       },
       layout: {
+        'visibility': props.selectedLayers.industrialAreaScope ? 'visible' : 'none'
       }
     }, 'riceCrop-layer');
 
@@ -367,9 +348,10 @@ function addAdditionalSourceAndLayer() {
           ['==', ['get', 'class'], '1'], '#ff0000',
           '#000000'
         ],
-        'fill-opacity': 0.5
+        'fill-opacity': parseFloat(props.layerTransparency.soilLiquefactionPotential) / 100.0
       },
       layout: {
+        'visibility': props.selectedLayers.countyCityBoundariesGeoJSON ? 'visible' : 'none'
       }
     });
 
@@ -385,8 +367,10 @@ function addAdditionalSourceAndLayer() {
       paint: {
         'line-width': 1.3333,
         'line-color': '#ffffff',
+        'line-opacity': parseFloat(props.layerTransparency.countyCityBoundariesGeoJSON) / 100.0
       },
       layout: {
+        'visibility': props.selectedLayers.countyCityBoundariesGeoJSON ? 'visible' : 'none'
       }
     });
 
@@ -406,11 +390,13 @@ function addAdditionalSourceAndLayer() {
           { 'font-scale': 1 }
         ],
         'text-font': ['Open Sans Semibold'],
+        'visibility': props.selectedLayers.countyCityBoundariesSymbol ? 'visible' : 'none'
       },
       paint: {
         'text-color': '#4E4E4E',
         'text-halo-color': '#FFFFFF',
         'text-halo-width': 1.33333,
+        'text-opacity': parseFloat(props.layerTransparency.countyCityBoundariesSymbol) / 100.0
       }
     });
   });
@@ -438,50 +424,89 @@ function resetClickedState() {
   });
 }
 
-const getInitialColors = () => {
-  if (!map.value) return;
 
-  const initialColors = {};
-  roadTypes.forEach(roadType => {
-    if (Layers[props.mapStyle] && Layers[props.mapStyle].line && Layers[props.mapStyle].line[roadType]) {
-      const layerId = Layers[props.mapStyle].line[roadType][1];
-      if (layerId) {
-        console.log(map.value)
-        console.log(layerId)
-        const color = map.value.getPaintProperty(layerId, 'line-color');
-        console.log(color)
-        initialColors[roadType] = color;
+function removeAddedLayers(styleName) {
+  if (addedLayerIds.value[styleName]) {
+    addedLayerIds.value[styleName].forEach(layerId => {
+      if (map.value.getLayer(layerId)) {
+        map.value.removeLayer(layerId);
       }
-    }
-  });
-
-  emit('update:layerColors', initialColors);
-};
-
-onMounted(async () => {
-  const { lng, lat, zoom, bearing, pitch } = props.modelValue;
-  try {
-    await fetchMapStyle(styles[props.mapStyle], props.mapStyle);
-
-  } catch (error) {
-    console.error('Error initializing map:', error);
+    });
+    addedLayerIds.value[styleName] = [];
   }
+}
+
+onMounted(() => {
+  baseUrl.value = window.location.origin;
+  const { lng, lat, zoom, bearing, pitch } = props.modelValue;
+  const blankStyle = {
+    version: 8,
+    name: 'BlankMap',
+    sources: {},
+    layers: [
+      {
+        id: 'backgroundMap',
+        type: 'background',
+        paint: {
+          'background-color': 'rgba(0, 0, 0, 0)'
+        }
+      }
+    ],
+    "glyphs": "https://api.maptiler.com/fonts/{fontstack}/{range}.pbf?key=Q1ccDNKktmjNBdazPWHD",
+    "sprite": `${baseUrl.value}/merged_image`,
+  };
+
   map.value = new mapboxgl.Map({
     container: mapContainer.value,
-    style: styles[props.mapStyle],
+    style: blankStyle,
     center: [lng, lat],
     bearing,
     pitch,
     zoom
   });
-
   map.value.addControl(new mapboxgl.NavigationControl());
-  map.value.on('load', () => {
-    addAdditionalSourceAndLayer();
-    getInitialColors();
-  });
-});
 
+  map.value.on('move', updateLocation);
+  map.value.on('zoom', updateLocation);
+  map.value.on('rotate', updateLocation);
+  map.value.on('pitch', updateLocation);
+
+  previousStyle.value = props.mapStyle;
+
+  addedLayerIds.value[props.mapStyle] = [];
+
+  axios.get(styles[props.mapStyle])
+    .then(response => {
+      const mapStyle = response.data;
+      map.value.on('load', () => {
+        Object.keys(mapStyle.sources).forEach(sourceName => {
+          if (!map.value.getSource(sourceName)) {
+            map.value.addSource(sourceName, mapStyle.sources[sourceName]);
+          }
+        });
+        mapStyle.layers.forEach(layer => {
+          if (!map.value.getLayer(layer.id)) {
+            map.value.addLayer(layer);
+            addedLayerIds.value[props.mapStyle].push(layer.id);
+          }
+        });
+      });
+      map.value.on('load', () => {
+        map.value.addLayer({
+          id: 'blank-layer',
+          type: 'background',
+          paint: {
+            'background-color': 'rgba(255, 255, 255, 0)'
+          }
+        });
+      });
+      addAdditionalSourceAndLayer()
+
+    })
+    .catch(error => {
+      console.error('Error loading the map style:', error);
+    });
+});
 
 onUnmounted(() => {
   if (map.value) {

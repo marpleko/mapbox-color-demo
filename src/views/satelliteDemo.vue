@@ -2,7 +2,7 @@
   <div id="layout">
     <div id="sidebar">
       <div>
-        <button @click="changeMotorwayColor">國道顏色變紅透明度80%</button>
+        <button @click="changeMotorwayColor">國道顏色變紅透明度40%</button>
         <!-- <button @click="changePrimaryColor">省道顏色變紅透明度80%</button> -->
       </div>
     </div>
@@ -13,7 +13,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import Map from '../maps/satelliteDemoMap.vue';
+import Map from '../maps/SatelliteDemoMap.vue';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
 const mapStyle = ref('satelliteStyle');

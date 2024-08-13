@@ -1,5 +1,8 @@
 <template>
   <div ref="mapContainer" class="map-container"></div>
+
+
+
 </template>
 
 <script setup>
@@ -17,7 +20,7 @@ const styles = {
   'mapboxStyle': import.meta.env.VITE_mapboxStyle,
   'maptilerStyle': import.meta.env.VITE_maptilerStyle,
   'ncdrStyle': import.meta.env.VITE_ncdrStyle,
-  'satelliteStyle': import.meta.env.VITE_satellite
+  'satelliteStyle': import.meta.env.VITE_satelliteStyle
 }
 const emit = defineEmits(['update:modelValue']);
 const mapContainer = ref(null);
@@ -41,16 +44,17 @@ watch(
       'bridge_motorway_link',
       'bridge_motorway',
     ];
+
     if (props.isMotorwayChangeProperty) {
       layers.forEach(layer => {
-        map.value.setPaintProperty(layer, 'line-opacity', 0.2);
+        map.value.setPaintProperty(layer, 'line-opacity', 0.6);
         map.value.setPaintProperty(layer, 'line-color', 'hsl(0, 100%, 50%)');
 
       });
     } else {
       layers.forEach(layer => {
-        map.value.setPaintProperty(layer, 'line-opacity', 1);
-        map.value.setPaintProperty(layer, 'line-color', '#fc8');
+        map.value.setPaintProperty(layer, 'line-opacity', 0.5);
+        map.value.setPaintProperty(layer, 'line-color', 'rgb(139, 165, 193)');
 
       });
     }
@@ -94,7 +98,7 @@ watch(
       "filter": ["all", ["==", "brunnel", "tunnel"], ["==", "class", "primary"]],
       "layout": { "line-join": "round" },
       "paint": {
-        "line-color": "#FF0000",  // 這裡設定新的顏色為紅色
+        "line-color": "#FF0000",
         "line-width": { "base": 1.2, "stops": [[5, 0], [7, 1], [20, 18]] }
       }
     });
@@ -129,7 +133,7 @@ onMounted(() => {
   // Initialize the map
   map.value = new mapboxgl.Map({
     container: mapContainer.value,
-    style: '/mapbox-color-demo/style_road_district.json',
+    style: '/mapbox-color-demo/osm_liberty_NLSC_toNick_boundary.json',
     center: [lng, lat],
     bearing,
     pitch,
@@ -139,9 +143,7 @@ onMounted(() => {
   map.value.addControl(new mapboxgl.NavigationControl());
 
   map.value.on('load', () => {
-    map.value.addImport({ id: 'road', url: import.meta.env.VITE_mapboxStyle });
-    console.log(map.value)
-    console.log("Style fully loaded, and custom modifications can be safely made.");
+    map.value.addImport({ id: 'satellite', url: import.meta.env.VITE_satelliteStyle }, "basemap");
   });
 });
 onUnmounted(() => {
