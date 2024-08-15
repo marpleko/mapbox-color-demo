@@ -9,10 +9,10 @@
   "sources": {
     "openmaptiles": {
       "type": "vector",
-      "url": "https://casite.richitech.com.tw/VectorTile/NLSC/tiles/map-v1/tiles.json"
+      "url": "https://cavt.richitech.com.tw/NLSC/tiles/map-v1/tiles.json"
     }
   },
-  "sprite": "https://casite.richitech.com.tw/VectorTile/NLSC/styles/map-v1/sprite/sprite",
+  "sprite": "https://cavt.richitech.com.tw/NLSC/styles/map-v1/sprite/sprite",
   "glyphs": "https://orangemug.github.io/font-glyphs/glyphs/{fontstack}/{range}.pbf",
   "layers": [
     {
